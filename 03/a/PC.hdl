@@ -16,5 +16,17 @@ CHIP PC {
     OUT out[16];
 
     PARTS:
-    // Put your code here:
+    //Selector bit arithmetic
+    Not(in = reset , out = resetInv); 
+    Not(in = load, out = loadInv);
+    Or(a = reset, b = load, out = outOr);
+    And(a = outOr, b = resetInv, out = firstSel);
+    And(a = inc, b = loadInv, out = outAnd);
+    And(a = outAnd, b = resetInv, out = secSel);
+
+    Inc16(in = outT, out = outTInc);
+
+    Mux4Way16(a = false, b = in, c = outTInc, d = outT, sel[0] = firstSel, sel[1] = secSel, out = outMux);
+    Register(in = outMux, load = true, out = outT);
+    Or16(a = outT, b = false, out = out);
 }
